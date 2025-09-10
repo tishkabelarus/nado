@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+            <h2>Удаление поста</h2>
+    
+            <form method="post">
+                {% csrf_token %}
+                <p>Вы уверены, что хотите удалить пост "{{ post.name }}"?</p>
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{% url 'post_list' %}" class="btn btn-secondary ml-2">Отмена</a>
+            </form>
+{% endblock %}

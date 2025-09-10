@@ -1,0 +1,55 @@
+{% extends 'flatpages/default.html' %}
+
+{% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+<h1>Все посты (всего: {{ total_posts_count }})</h1>
+<button><a href="/">в главное меню</a></button>
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти" />
+</form>
+
+{% if posts %}
+    <ul>
+    {% for post in posts %}
+        <li>
+            <h3>{{ post.name }}</h3>
+            <p>Автор: {{ post.author.user.username|default:"Аноним" }}</p>
+            <p>{{ post.text|currency|truncatewords:20 }}</p>
+            <p>Дата: {{ post.creation_time|date:"d.m.Y H:i" }}</p>
+            <p>Рейтинг: {{ post.rating }}</p>
+            <button><a href="{{ post.pk }}">подробнее</a></button>
+        </li>
+        <hr>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Постов не найдено. Попробуйте изменить параметры поиска.</p>
+{% endif %}
+
+{% if page_obj.has_previous %}
+       {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+{% endblock content %}

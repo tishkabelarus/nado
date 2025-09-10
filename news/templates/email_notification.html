@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>Здравствуй, {{ user.username }}. Новая статья в твоём любимом разделе!</p>
+    <h1>{{ post.name }}</h1>
+    <p>{{ post.text|truncatechars:50 }}</p>
+    <a href="http://127.0.0.1:8000/posts/{{post.pk}}">к статье</a>
+</body>
+</html>

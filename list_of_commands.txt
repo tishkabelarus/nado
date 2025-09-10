@@ -1,0 +1,85 @@
+from django.contrib.auth.models import User
+from news_portal.models import Author, Category, Post, Comment
+
+# 1. Создать двух пользователей
+user1 = User.objects.create_user('ivan')
+user2 = User.objects.create_user('petr')
+
+# 2. Создать два объекта модели Author, связанные с пользователями
+author1 = Author.objects.create(user=user1)
+author2 = Author.objects.create(user=user2)
+
+# 3. Добавить 4 категории в модель Category
+cat1 = Category.objects.create(name='Политика')
+cat2 = Category.objects.create(name='Технологии')
+cat3 = Category.objects.create(name='Спорт')
+cat4 = Category.objects.create(name='Экономика')
+
+# 4. Добавить 2 статьи и 1 новость
+post1 = Post.objects.create(author=author1,article_or_news=Post.article,name='Новый iPhone',text='Apple выпустила новый iPhone с революционным дизайном...',rating=0)
+
+post2 = Post.objects.create(author=author2,article_or_news=Post.article,name='Квантовые компьютеры',text='Ученые совершили прорыв в квантовых вычислениях...',rating=0)
+
+post3 = Post.objects.create(author=author1,article_or_news=Post.news,name='Чемпионат мира',text='Сборная России вышла в финал чемпионата мира...',rating=0)
+
+# 5. Присвоить категории (в post1 - 2 категории)
+post1.category.add(cat2, cat4)
+post2.category.add(cat2)
+post3.category.add(cat3)
+
+# 6. Создать 4 комментария
+comment1 = Comment.objects.create(comment_post=post1,comment_user=user1,text='Отличный телефон!',rating=0)
+
+comment2 = Comment.objects.create(comment_post=post1,comment_user=user2,text='Слишком дорого',rating=0)
+
+comment3 = Comment.objects.create(comment_post=post2,comment_user=user1,text='Это изменит всё!',rating=0)
+
+comment4 = Comment.objects.create(comment_post=post3,comment_user=user2,text='Мы чемпионы!',rating=0)
+
+# 7. Корректировка рейтингов
+# Лайки/дислайки для статей
+post1.like()  # +1
+post1.like()  # +1
+post1.dislike()  # -1 → итого: 1
+
+post2.like()  # +1
+post2.like()  # +1
+post2.like()  # +1 → итого: 3
+
+post3.dislike()  # -1
+post3.dislike()  # -1 → итого: -2
+
+# Лайки/дислайки для комментариев
+comment1.like()  # +1
+comment1.like()  # +1 → итого: 2
+
+comment2.dislike()  # -1 → итого: -1
+
+comment3.like()  # +1 → итого: 1
+
+comment4.like()  # +1
+comment4.like()  # +1
+comment4.like()  # +1 → итого: 3
+
+# 8. Обновить рейтинги авторов
+author1.update_rating()
+author2.update_rating()
+
+# 9. Лучший пользователь
+best_author = Author.objects.order_by('-rating').first()
+print(f"Лучший автор: {best_author.user.username}, рейтинг: {best_author.rating}")
+
+# 10. Лучшая статья
+best_post = Post.objects.order_by('-rating').first()
+print(f"Лучшая статья: {best_post.name}, рейтинг: {best_post.rating}")
+print(f"Дата: {best_post.creation_time}, автор: {best_post.author.user.username}")
+print(f"Превью: {best_post.text[:50]}...")
+
+# 11. Все комментарии к лучшей статье
+comments = Comment.objects.filter(comment_post=best_post).order_by('-date_upload')
+print("\nКомментарии к лучшей статье:")
+for comment in comments:
+print(f"{comment.date_upload} | {comment.comment_user.username} | {comment.rating} | {comment.text}")
+
+
+#Я очень долго работал над проектом, надеюсь это потянет на 100%

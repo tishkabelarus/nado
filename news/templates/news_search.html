@@ -1,0 +1,25 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Поиск новостей</h1>
+
+<form method="get" >
+            {{ search_form.name }}
+            {{ search_form.author }}
+            {{ search_form.date_after }}
+            <button type="submit">Искать</button>
+</form>
+
+{% if news %}
+        {% for post in news %}
+                <h5>{{ post.name }}</h5>
+                <p>{{ post.text|truncatechars:200 }}</p>
+                <small>
+                    Автор: {{ post.author }} | {{ post.created_at|date:"d.m.Y H:i" }}
+                </small>
+                <hr>
+        {% endfor %}
+{% else %}
+    <div class="alert alert-info">Новости не найдены. Попробуйте изменить критерии поиска.</div>
+{% endif %}
+{% endblock %}

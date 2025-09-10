@@ -1,0 +1,27 @@
+
+{% extends 'flatpages/default.html' %}
+
+{% load cache %}
+{% load static %}
+{% load custom_filters %}
+
+{% cache 300 content %}
+
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+<h1>{{ post }}</h1>
+<hr>
+<p></p>
+    <p>Автор: {{ post.author.user.username }}</p>
+    <p>{{ post.text|currency }}</p>
+    <p>Дата: {{ post.creation_time|date:"d.m.Y H:i" }}</p>
+    <p>Рейтинг: {{ post.rating }}</p>
+
+<button><a href="/posts">обратно ко всем постам</a></button>
+
+{% endblock content %}
+
+{% endcache %}
